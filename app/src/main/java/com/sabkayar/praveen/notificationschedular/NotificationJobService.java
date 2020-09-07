@@ -7,6 +7,8 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
@@ -18,9 +20,10 @@ public class NotificationJobService extends JobService {
     //Notification ID(Must be unique within same app) to replace the existing notification
     private static final int NOTIFICATION_ID = 0;
 
+    private AsyncTask<Void, Void, String> mAsyncTask;
 
     @Override
-    public boolean onStartJob(JobParameters params) {
+    public boolean onStartJob(final JobParameters params) {
         //Create the notification channel
         createNotificationChannel();
 
@@ -28,7 +31,7 @@ public class NotificationJobService extends JobService {
         PendingIntent contentPendingIntent = PendingIntent.getActivity(this, 0
                 , new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
                 .setContentTitle("Job Service")
                 .setContentText("Your Job is running!")
                 .setContentIntent(contentPendingIntent)
@@ -37,13 +40,27 @@ public class NotificationJobService extends JobService {
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true);
 
-        mNotifyManager.notify(NOTIFICATION_ID, builder.build());
-
-        return false;
+        mAsyncTask = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... para) {
+                try {
+                    Thread.sleep(5000);
+                    mNotifyManager.notify(NOTIFICATION_ID, builder.build());
+                    jobFinished(params, false);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        mAsyncTask.execute();
+        return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
+        Toast.makeText(this, "Job Failed", Toast.LENGTH_SHORT).show();
+        mAsyncTask.cancel(true);
         return true;
     }
 
