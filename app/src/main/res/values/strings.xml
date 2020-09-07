@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">SampleJobSchedular</string>
+    <string name="schedule_job">Schedule Job</string>
+    <string name="none">None</string>
+    <string name="any">Any</string>
+    <string name="wifi">Wifi</string>
+    <string name="network_type_required">Network Type Required:</string>
+    <string name="cancel_jobs">Cancel Jobs</string>
+    <string name="requires">Requires:</string>
+    <string name="override_deadline">Override Deadline:</string>
+    <string name="not_set">Not Set</string>
 </resources>

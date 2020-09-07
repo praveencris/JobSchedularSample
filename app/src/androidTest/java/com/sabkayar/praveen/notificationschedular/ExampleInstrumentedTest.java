@@ -1,4 +1,4 @@
-package com.sabkayar.praveen.samplejobschedular;
+package com.sabkayar.praveen.notificationschedular;
 
 import android.content.Context;
 
